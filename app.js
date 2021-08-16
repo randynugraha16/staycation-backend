@@ -10,7 +10,7 @@ const flash = require("connect-flash");
 
 // Setup MongoDB
 const mongoose = require("mongoose")
-mongoose.connect('mongodb://localhost:27017/db_staycation', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://admin-staycation:KodokLoncat11@cluster0.zxuba.mongodb.net/db_staycation?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 

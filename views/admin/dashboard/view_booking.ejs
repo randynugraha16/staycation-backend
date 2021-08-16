@@ -1,0 +1,152 @@
+<%- include("../../templates/header.ejs") %> <%-
+include("../../templates/navbar.ejs") %> <%-
+include("../../templates/sidebar.ejs") %>
+
+<style>
+    .dataTable-selector{
+        width: 4rem;
+    }
+</style>
+
+
+<% if (action  == "detail") { %>
+    <h3>Detail Booking</h3>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="card-header">
+                <a href="/admin/booking" class="btn btn-info text-white">&laquo; Back</a>
+                <% if (msg.length !== 0) { %>
+
+                    <% if (status == "danger") { %>
+                       <div class="alert alert-danger mt-2" role="alert"><%= msg %></div>
+                    <% } else { %>
+            
+                        <div class="alert alert-success mt-2" role="alert"><%= msg %></div>
+                  <% } } %>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-4">
+                        <img src="/<%= booking.payments.proofPayment %>" class="img-fluid w-100" alt="book">
+                        <% if (booking.payments.status == "Proses") { %>
+                            <div class="row text-center">
+                                <div class="col">
+                                    <form action="/admin/booking/<%= booking._id %>/accept?_method=PUT" class="d-inline" method="POST">
+                                        <button class="btn btn-success"><i class="fas fa-check"></i> Confirm</button>
+                                    </form>
+                                </div>
+                                <div class="col">
+                                    <form action="/admin/booking/<%= booking._id %>/reject?_method=PUT" class="d-inline" method="POST">
+                                        <button class="btn btn-danger"><i class="fas fa-times"></i> Reject</button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            
+                            <% } %>
+                    </div>
+                    <div class="col-8">
+                        <table id="datatablesSimple">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Destination</th>
+                                    <th>Name Member</th>
+                                    <th>Nama Pengirim</th>
+                                    <th>Price Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <%= booking.bookingStartDate.toLocaleString().split(",")[0] + " - " + booking.bookingEndDate.toLocaleString().split(",")[0] %>
+                                    </td>
+                                    <td>
+                                        <%= booking.itemId.title %>
+                                    </td>
+                                    <td>
+                                        <%= booking.memberId.firstName %> <%= booking.memberId.lastName %>
+                                    </td>
+                                    <td>
+                                        <%= booking.payments.accountHolder %>
+                                    </td>
+                                    <td>
+                                        <%= booking.total %>
+                                    </td>
+                                    <td>
+                                        <%= booking.payments.status %>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+<% } else { %>
+
+
+
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="card-header">
+            <h3>Halaman Booking</h3>
+            <% if (msg.length !== 0) { %>
+
+                <% if (status == "danger") { %>
+                   <div class="alert alert-danger mt-2" role="alert"><%= msg %></div>
+                <% } else { %>
+        
+                    <div class="alert alert-success mt-2" role="alert"><%= msg %></div>
+              <% } } %>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Invoice</th>
+                    <th>Date</th>
+                    <th>Destination</th>
+                    <th>Name Member</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% let a = 1; booking.forEach(i => { %>
+                <tr>
+                        <td><%= a++ %></td>
+                        <td>#<%= i.invoice %></td>
+                        <td><%= i.bookingStartDate.toLocaleString().split(",")[0] + " - " + i.bookingEndDate.toLocaleString().split(",")[0] %></td>
+                        <td><%= i.itemId.title %></td>
+                        <td><%= i.memberId.firstName + " " + i.memberId.lastName%></td>
+                        <td>
+                            <% if (i.payments.status == "Accept") { %>
+                                <span class="badge rounded-pill bg-success">Success</span>
+                            <% } else if (i.payments.status == "Reject") {  %>
+                                <span class="badge rounded-pill bg-danger">Rejected</span>
+                            <% } else {%>
+                                <span class="badge rounded-pill bg-info">Process</span>
+                            <% } %>    
+                        </td>
+                        <td>
+                            <a href="/admin/booking/<%= i.id %>" class="btn btn-warning text-white me-2 btn-sm rounded-pill">
+                                <div class="fas fa-edit"></div>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<% } %>
+
+<%- include("../../templates/footer.ejs") %>

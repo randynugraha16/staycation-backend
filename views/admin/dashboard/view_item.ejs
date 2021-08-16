@@ -1,0 +1,490 @@
+<%- include("../../templates/header.ejs") %> <%-
+include("../../templates/navbar.ejs") %> <%-
+include("../../templates/sidebar.ejs") %>
+
+<style>
+    .dataTable-selector{
+        width: 4rem;
+    }
+</style>
+
+
+
+  <% if (action == "detail") { %>
+
+    <h3><%= item.title %> </h3>
+    <% if (msg.length !== 0) { %>
+
+        <% if (status == "danger") { %>
+           <div class="alert alert-danger mt-2" role="alert"><%= msg %></div>
+        <% } else { %>
+
+            <div class="alert alert-success mt-2" role="alert"><%= msg %></div>
+      <% } } %>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="detail-data-tab" data-bs-toggle="tab" data-bs-target="#detail-data" type="button" role="tab" aria-controls="detail-data" aria-selected="true">Detail</button>
+        <button class="nav-link" id="image-show-tab" data-bs-toggle="tab" data-bs-target="#image-show" type="button" role="tab" aria-controls="image-show" aria-selected="true">Image</button>
+        <button class="nav-link" id="show-feature-tab" data-bs-toggle="tab" data-bs-target="#show-feature" type="button" role="tab" aria-controls="show-feature" aria-selected="true">Feature</button>
+        <button class="nav-link" id="show-activity-tab" data-bs-toggle="tab" data-bs-target="#show-activity" type="button" role="tab" aria-controls="show-activity" aria-selected="true">Activity</button>
+
+      </div>
+    </nav>
+
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade" id="image-show" role="tabpanel" aria-labelledby="image-show-tab">
+        <div class="container mt-5">
+          <form action="/admin/item/photo?_method=PUT" method="POST" enctype="multipart/form-data" >
+            <input type="hidden" name="idItem" value="<%= item._id %>">
+            <input type="file" accept="image/*" name="imageUrl" class="form-control" style="display: none"  id="imgInp" />
+            <button
+              type="button"
+              class="btn btn-secondary btn-block"
+              onclick="thisFileUpload()"
+            >
+              Tambah Foto
+            </button>
+            <button
+              type="submit"
+              class="btn btn-success btn-block ms-3"
+              onclick="return confirm('Apakah Anda Yakin?')"
+            >
+              Save
+            </button>
+            <form runat="server">
+              <div class="col-4 my-3">
+                <div class="gallery-container">
+                  <img id="blah" src="#" alt=""/>
+                </div>
+              </div>
+            </form>
+          </form>
+          <div class="row">
+              <% item.imageId.forEach(i => { %>
+              <div class="col-4">
+                <img src="/<%= i.imageUrl %>" class="img-fluid" alt="detail">
+                <form action="/admin/item/photo" method="POST">
+                  <input type="hidden" name="oldImageId" value="<%= i._id %>">
+                  <input type="hidden" name="imageUrl" value="<%= i.imageUrl %>">
+                  <input type="hidden" name="idItem" value="<%= item._id %>">
+                  <button type="submit" onclick="return confirm('Apakah Anda Yakin?')" class="btn btn-danger btn-sm badge">Hapus</button>
+                </form>
+              </div>
+              <% }) %>
+            </div>
+            <a href="/admin/item" class="text-decoration-none">&laquo; Back</a>
+          </div>
+    </div>
+      <div class="tab-pane fade" id="show-activity" role="tabpanel" aria-labelledby="show-activity-tab">
+        <div class="container">
+          <div class="row">
+            <div class="col-4">
+              <form action="/admin/item/addActivity" method="POST" class="mt-3" enctype="multipart/form-data">
+                <input type="hidden" name="itemId" value="<%= item._id %>">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input name="name" type="text" class="form-control" id="name" required >
+                </div>
+                <div class="mb-3">
+                  <label for="type" class="form-label">Type</label>
+                  <input name="type" type="text" class="form-control" id="type" required >
+                </div>
+                <div class="mb-3">
+                  <label for="imageUrl" class="form-label">Image</label>
+                  <input name="imageUrl" type="file" accept="image/*"  class="form-control" id="imageUrl" required >
+                </div>
+                <div class="modal-footer">
+                    <a href="/admin/item" class="btn btn-secondary">Back</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+            </div>
+            <div class="col-8">
+              <table id="datatablesActivity">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <% let b = 1; item.activityId.forEach(i => { %>
+                    <tr>
+                        <td><%= b++ %></td>
+                        <td><%= i.name %></td>
+                        <td><%= i.type %></td>
+                        <td>
+                          <img src="/<%= i.imageUrl %>" class="img-fluid w-75" alt="<%= i.name +" "+ i.type %>">
+                        </td>
+                        <td>    
+                          <button type="button" data-bs-target="#edit-activity" data-bs-toggle="modal" data-id-activity="<%= i._id %>" data-name-activity="<%= i.name %>" data-type-activity="<%= i.type %>" data-imageold-activity="<%= i.imageUrl %>" id="button-activity-edit" class="btn btn-warning text-white me-2 btn-sm rounded-pill">
+                            <div class="fas fa-edit"></div>
+                          </button>   
+                              <form action="/admin/item/deleteActivity?_method=DELETE" method="POST" class="d-inline">
+                                <input type="hidden" name="id" value="<%= i.id %>">
+                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                <input type="hidden" name="imageUrl" value="<%= i.imageUrl %>">
+                                <button type="sumbit" onclick="return confirm('Apakah Anda Yakin?')" class="btn btn-danger btn-sm rounded-pill" >
+                                    <i class="fas fa-trash"></i>
+                              </button>
+                            </form>
+                        </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+    </div>
+      <div class="tab-pane fade" id="show-feature" role="tabpanel" aria-labelledby="show-feature-tab">
+        <div class="container">
+          <div class="row">
+            <div class="col-4">
+              <form action="/admin/item/addfeature" method="POST" class="mt-3" enctype="multipart/form-data">
+                <input type="hidden" name="itemId" value="<%= item._id %>">
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input name="name" type="text" class="form-control" id="name" required >
+                </div>
+                <div class="mb-3">
+                  <label for="qty" class="form-label">QTY</label>
+                  <input name="qty" type="number" class="form-control" id="qty" required >
+                </div>
+                <div class="mb-3">
+                  <label for="imageUrl" class="form-label">Image</label>
+                  <input name="imageUrl" type="file" accept="image/*"  class="form-control" id="imageUrl" required >
+                </div>
+                <div class="modal-footer">
+                    <a href="/admin/item" class="btn btn-secondary">Back</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+            </div>
+            <div class="col-8">
+              <table id="datatablesFeature">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Qty</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <% let a = 1; item.featureId.forEach(i => { %>
+                    <tr>
+                        <td><%= a++ %></td>
+                        <td><%= i.name %></td>
+                        <td><%= i.qty %></td>
+                        <td>
+                          <img src="/<%= i.imageUrl %>" class="img-fluid w-50" alt="">
+                        </td>
+                        <td>    
+                          <button type="button" data-bs-target="#edit-feature" data-bs-toggle="modal" data-id="<%= i._id %>" data-name="<%= i.name %>" data-qty="<%= i.qty %>" data-imageold="<%= i.imageUrl %>" id="button-edit" class="btn btn-warning text-white me-2 btn-sm rounded-pill">
+                            <div class="fas fa-edit"></div>
+                          </button>   
+                            <form action="/admin/item/deleteFeature?_method=DELETE" method="POST" class="d-inline">
+                                <input type="hidden" name="id" value="<%= i.id %>">
+                                <input type="hidden" name="itemId" value="<%= item._id %>">
+                                <input type="hidden" name="imageUrl" value="<%= i.imageUrl %>">
+                                <button type="sumbit" onclick="return confirm('Apakah Anda Yakin?')" class="btn btn-danger btn-sm rounded-pill" >
+                                    <i class="fas fa-trash"></i>
+                               </button>
+                            </form>
+                        </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+    </div>
+      <div class="tab-pane fade show active" id="detail-data" role="tabpanel" aria-labelledby="image-show-tab">
+        <form action="/admin/item?_method=PUT" method="POST" class="mt-3">
+          <input type="hidden" name="id" value="<%= item._id %>">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input name="title" type="text" class="form-control" id="title" value="<%= item.title %>" required >
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input name="price" type="number" class="form-control" id="price" value="<%= item.price %>" required >
+          </div>
+          <div class="mb-3">
+            <label for="city" class="form-label">City</label>
+            <input name="city" type="text" class="form-control" id="city" value="<%= item.city %>" required >
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select id="category" name="categoryId" class="form-select">
+              <option value="<%= item.categoryId._id %>" selected>---- <%= item.categoryId.name %> ----</option>
+              <% category.forEach(i => { %>
+                  <option value="<%= i.id %>"><%= i.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description"><%= item.description %></textarea>
+          </div>
+          <div class="modal-footer">
+              <a href="/admin/item" class="btn btn-secondary">Back</a>
+              <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="edit-feature" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Feature</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/admin/item/feature?_method=PUT" method="POST" class="mt-3" enctype="multipart/form-data">
+                  <div class="modal-body">
+                      <input type="hidden" name="itemId" value="<%= item._id %>">
+                      <input type="hidden" name="id" id="id-edit">
+                      <input type="hidden" name="imageUrlOld" id="image-edit">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input name="name" type="text" class="form-control" id="name-edit" required >
+                      </div>
+                      <div class="mb-3">
+                        <label for="qty" class="form-label">QTY</label>
+                        <input name="qty" type="number" class="form-control" id="qty-edit" required >
+                      </div>
+                      <div class="mb-3">
+                        <label for="imageUrl" class="form-label">Image</label>
+                        <input name="imageUrl" type="file" accept="image/*"  class="form-control" id="imageUrl" >
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                      </div>
+                  </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="edit-activity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Activity</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/admin/item/activity?_method=PUT" method="POST" class="mt-3" enctype="multipart/form-data">
+                  <div class="modal-body">
+                      <input type="hidden" name="itemId" value="<%= item._id %>">
+                      <input type="hidden" name="id" id="id-activity-edit">
+                      <input type="hidden" name="imageUrlOld" id="image-activity-edit">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input name="name" type="text" class="form-control" id="name-activity-edit" required >
+                      </div>
+                      <div class="mb-3">
+                        <label for="type-activity-edit" class="form-label">Type</label>
+                        <input name="type" type="text" class="form-control" id="type-activity-edit" required >
+                      </div>
+                      <div class="mb-3">
+                        <label for="imageUrl" class="form-label">Image</label>
+                        <input name="imageUrl" type="file" accept="image/*"  class="form-control" id="imageUrl" >
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                      </div>
+                  </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+  <% } else { %>
+    <h3>Halaman Item</h3>
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <button class="nav-link active" id="list-data-tab" data-bs-toggle="tab" data-bs-target="#list-data" type="button" role="tab" aria-controls="list-data" aria-selected="true">List Data</button>
+        <button class="nav-link" id="add-data-tab" data-bs-toggle="tab" data-bs-target="#add-data" type="button" role="tab" aria-controls="add-data" aria-selected="false">Add Data</button>
+
+    </div>
+    <% if (msg.length !== 0) { %>
+
+      <% if (status == "danger") { %>
+          <div class="alert alert-danger mt-2" role="alert"><%= msg %></div>
+     <% } else { %>
+
+       <div class="alert alert-success mt-2" role="alert"><%= msg %></div>
+    <% } } %>
+  </nav>
+
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="list-data" role="tabpanel" aria-labelledby="list-data-tab">
+        <div class="card mb-4">
+            <div class="card-body">
+                <table id="datatablesSimple">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Country</th>
+                            <th>City</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <% let a = 1; item.forEach(i => { %>
+                        <tr>
+                            <td><%= a++ %></td>
+                            <td><%= i.title %></td>
+                            <td><%= i.price %></td>
+                            <td><%= i.country %></td>
+                            <td><%= i.city %></td>
+                            <td>    
+                              <a href="/admin/item/<%= i.id %>" class="btn btn-warning text-white me-2 btn-sm rounded-pill">
+                                <div class="fas fa-edit"></div>
+                            </a>   
+                                <form action="/admin/item/<%= i._id %>/delete?_method=DELETE" method="POST" class="d-inline">
+                                    <input type="hidden" name="id" value="<%= i.id %>">
+                                    <button type="sumbit" onclick="return confirm('Apakah Anda Yakin?')" class="btn btn-danger btn-sm rounded-pill" >
+                                        <i class="fas fa-trash"></i>
+                                   </button>
+                                </form>
+                            </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="add-data" role="tabpanel" aria-labelledby="add-data-tab">
+        <form action="/admin/item" method="POST" class="mt-3" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input name="title" type="text" class="form-control" id="title" required >
+            </div>
+            <div class="mb-3">
+              <label for="price" class="form-label">Price</label>
+              <input name="price" type="number" class="form-control" id="price" required >
+            </div>
+            <div class="mb-3">
+              <label for="city" class="form-label">City</label>
+              <input name="city" type="text" class="form-control" id="city" required >
+            </div>
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <select id="category" name="categoryId" class="form-select">
+                <option disabled selected>-- Choose Category --</option>
+                <% category.forEach(i => { %>
+                    <option value="<%= i.id %>"><%= i.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="imageUrl" class="form-label">Image</label>
+              <input name="imageUrl" multiple accept="image/*" type="file" class="form-control" id="imageUrl" required >
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea name="description" id="description"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+    
+  </div>
+  <% } %> 
+
+
+
+
+
+
+  <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+  <script>
+    CKEDITOR.replace( 'description' );
+    </script>
+<script>
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      $('#blah').attr('src', e.target.result);
+    }
+
+    reader.readAsDataURL(input.files[0]); // convert to base64 string
+  }
+}
+
+$("#imgInp").change(function() {
+  readURL(this);
+});
+</script>
+
+<script>
+  function thisFileUpload() {
+    document.getElementById("imgInp").click();
+  }
+</script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+
+<script>
+  $(document).ready( function () {
+    $('#datatablesFeature').DataTable();
+    $('#datatablesActivity').DataTable();
+} );
+</script>
+
+<script>
+  $("#datatablesFeature").on("click", "#button-edit", function () {
+      let id = $(this).data("id")
+      let name = $(this).data("name")
+      let qty = $(this).data("qty")
+      let imageOld = $(this).data("imageold")
+      $("#name-edit").val(name)
+      $("#qty-edit").val(qty)
+      $("#id-edit").val(id)
+      $("#image-edit").val(imageOld)
+      
+      
+  })
+  
+  
+  
+  $("#datatablesActivity").on("click", "#button-activity-edit", function() {
+    let nameActivity = $(this).data("name-activity")
+      let typeActivity = $(this).data("type-activity")
+      let imageOldActivity = $(this).data("imageold-activity")
+      let idActivity = $(this).data("id-activity")
+      $("#id-activity-edit").val(idActivity)
+      $("#name-activity-edit").val(nameActivity)
+      $("#type-activity-edit").val(typeActivity)
+      $("#image-activity-edit").val(imageOldActivity)
+  })
+</script>
+
+
+<%- include("../../templates/footer.ejs") %>

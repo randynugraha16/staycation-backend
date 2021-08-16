@@ -1,0 +1,49 @@
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+      <nav
+        class="sb-sidenav accordion sb-sidenav-light"
+        id="sidenavAccordion"
+      >
+        <div class="sb-sidenav-menu">
+          <div class="nav">
+            <a class="nav-link mt-3" href="/admin/dashboard">
+              <div class="sb-nav-link-icon">
+                <i class="fas fa-tachometer-alt"></i>
+              </div>
+              Dashboard
+            </a>
+            <div class="sb-sidenav-menu-heading">Master</div>
+            <a class="nav-link" href="/admin/category">
+              <div class="sb-nav-link-icon">
+                <i class="fas fa-th"></i>
+              </div>
+              Category
+            </a>
+            <a class="nav-link" href="/admin/bank">
+              <div class="sb-nav-link-icon">
+                <i class="fas fa-university"></i>
+              </div>
+              Bank
+            </a>
+            <a class="nav-link" href="/admin/item">
+              <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+              Item
+            </a>
+            <div class="sb-sidenav-menu-heading">Order</div>
+            <a class="nav-link" href="/admin/booking">
+              <div class="sb-nav-link-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </div>
+              Booking
+            </a>
+          </div>
+        </div>
+        <div class="sb-sidenav-footer">
+          <div class="small">Logged in as:</div>
+          <%= user.username %> 
+        </div>
+      </nav>
+    </div>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid p-4">

@@ -1,0 +1,125 @@
+<%- include("../../templates/header.ejs") %>
+<%- include("../../templates/navbar.ejs") %>
+<%- include("../../templates/sidebar.ejs") %>
+
+<style>
+    .dataTable-selector {
+        width: 4rem;
+    }
+</style>
+
+<h3>Halaman Category</h3>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-add">
+            <div class="fas fa-plus"></div>
+        </button>
+        <% if (msg.length !== 0) { %>
+
+            <% if (status == "danger") { %>
+                <div class="alert alert-danger mt-2" role="alert"><%= msg %></div>
+           <% } else { %>
+
+             <div class="alert alert-success mt-2" role="alert"><%= msg %></div>
+        <% } } %>
+
+    </div>
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% let a = 1; category.forEach(i => { %>
+                <tr>
+                    <td><%= a++ %> </td>
+                    <td><%= i.name %> </td>
+                    <td>        
+                        <button type="button" data-id="<%= i.id %>"  data-name="<%= i.name %>" id="button-edit" class="btn btn-warning text-white me-3 btn-sm rounded-pill" >
+                             <i class="fas fa-edit"></i>
+                        </button>
+                        <form action="/admin/category?_method=DELETE" method="POST" class="d-inline">
+                            <input type="hidden" name="id" value="<%= i.id %>">
+                            <button type="sumbit" onclick="return confirm('Apakah Anda Yakin?')" class="btn btn-danger btn-sm rounded-pill" >
+                                <i class="fas fa-trash"></i>
+                           </button>
+                        </form>
+                    </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal Add-->
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/category" method="POST">
+                    <div class="mb-3">
+                      <label for="name-add" class="form-label">Name</label>
+                      <input name="name" type="text" class="form-control" id="name-add" required >
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Edit-->
+<div class="modal fade" id="modal-edit" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/category?_method=PUT" method="POST">
+                    <input type="hidden" name="id" id="id-edit">
+                    <div class="mb-3">
+                      <label for="name-edit" class="form-label">Name</label>
+                      <input name="name" type="text" class="form-control" id="name-edit" required >
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $("#datatablesSimple").on("click", "#button-edit", function () {
+        let id = $(this).data("id")
+        let name = $(this).data("name")
+        $("#modal-edit").modal("show")
+        $("#name-edit").val(name)
+        $("#id-edit").val(id)
+    })
+</script>
+
+<%- include("../../templates/footer.ejs") %>

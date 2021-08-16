@@ -1,0 +1,56 @@
+<%- include("../../templates/header.ejs") %> <%-
+include("../../templates/navbar.ejs") %> <%-
+include("../../templates/sidebar.ejs") %>
+
+<h3>Dashboard</h3>
+
+<div class="row mt-5">
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Member</div>
+                        <div class="h5 mb-0 fw-bold text-secondary"><%= member.length %> </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Booking</div>
+                        <div class="h5 mb-0 fw-bold text-secondary"><%= booking.length %> </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col me-2">
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Destination</div>
+                        <div class="h5 mb-0 fw-bold text-secondary"><%= item.length %> </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hotel fa-2x text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%- include("../../templates/footer.ejs") %>

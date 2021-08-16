@@ -1034,7 +1034,7 @@ var data = [
         memberId: mongoose.Types.ObjectId("5e96cbe292b97300fc903333"),
         bankId: mongoose.Types.ObjectId("5e96cbe292b97300fc903323"),
         payments: {
-          proofPayment: "images/bukti.jpeg",
+          proofPayment: "images/buktibayar.jpeg",
           bankFrom: "BCA",
           status: "Proses",
           accountHolder: "ang",
@@ -1089,12 +1089,12 @@ var data = [
       {
         _id: mongoose.Types.ObjectId("5e96cbe292b97300fc903345"),
         username: "admin",
-        password: "rahasia",
+        password: "Singapur99",
       },
       {
         _id: mongoose.Types.ObjectId("5e96cbe292b97300fc903346"),
         username: "superadmin",
-        password: "rahasia",
+        password: "Singapur99",
         role: "admin",
       },
     ],

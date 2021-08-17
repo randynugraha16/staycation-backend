@@ -16,7 +16,7 @@ module.exports = {
 
 
         const categories = await Category.find()
-        .limit(4)
+        .limit(5)
         .populate({
           path: "itemId",
           select: "_id title imageUrl isPopular price unit city country",

@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+const cors = require("cors")
+
 // Setup MongoDB
 const mongoose = require("mongoose")
 mongoose.connect('mongodb+srv://admin-staycation:KodokLoncat11@cluster0.zxuba.mongodb.net/db_staycation?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -22,6 +24,8 @@ const adminRouter = require("./routes/admin");
 const apiRouter = require("./routes/api");
 
 const app = express();
+
+app.use(cors)
 
 // Setup flash
 app.use(cookieParser("secret"));
